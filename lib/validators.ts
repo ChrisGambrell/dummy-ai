@@ -6,7 +6,7 @@ export const upsertSchemaSchema = z.object({
 		.optional()
 		.transform((arg) => (!arg?.trim() ? undefined : arg)),
 	name: z.string().min(1),
-	description: z.string().min(1),
+	desc: z.string().min(1),
 })
 
 export const upsertFieldSchema = z.object({
@@ -14,15 +14,15 @@ export const upsertFieldSchema = z.object({
 		.string()
 		.optional()
 		.transform((arg) => (!arg?.trim() ? undefined : arg)),
-	schema_id: z.string().uuid(),
+	schemaId: z.string(),
 	name: z.string().min(1),
-	description: z.string().min(1),
-	type: z.string().min(1),
+	desc: z.string().min(1),
+	type: z.enum(['boolean', 'date', 'decimal', 'enum', 'integer', 'string']),
 	options: z
 		.string()
 		.min(1)
 		.optional()
-		.transform((arg) => (!arg?.trim() ? null : arg.split(','))),
+		.transform((arg) => (!arg?.trim() ? [] : arg.split(','))),
 	nullable: z
 		.string()
 		.optional()

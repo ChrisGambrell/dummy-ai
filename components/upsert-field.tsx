@@ -2,7 +2,7 @@
 
 import { upsertField } from '@/lib/actions'
 import { useCloseOnComplete } from '@/lib/hooks'
-import { Row } from '@/lib/supabase/types'
+import { Field, Schema } from '@prisma/client'
 import { ReactNode, useState } from 'react'
 import { useFormState } from 'react-dom'
 import { ActionButton } from './action-button'
@@ -15,16 +15,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from './ui/switch'
 import { Textarea } from './ui/textarea'
 
-export function UpsertField({ children, field, schemaId }: { children: ReactNode; field?: Row<'fields'>; schemaId: Row<'schemas'>['id'] }) {
+export function UpsertField({ children, field, schemaId }: { children: ReactNode; field?: Field; schemaId: Schema['id'] }) {
 	const [state, action] = useFormState(upsertField, null)
 	const [open, onOpenChange] = useCloseOnComplete(state)
-	const [type, setType] = useState(field?.type)
+	const [type, setType] = useState(field?.type.toString())
 
 	return (
 		<DrawerDialog title={`${field ? 'Update' : 'Add'} Field`} trigger={children} open={open} onOpenChange={onOpenChange}>
 			<form action={action} className='grid gap-4'>
 				<input type='hidden' name='id' value={field?.id} />
-				<input type='hidden' name='schema_id' value={schemaId} />
+				<input type='hidden' name='schemaId' value={schemaId} />
 
 				<div className='grid gap-2'>
 					<Label htmlFor='name'>Name</Label>
@@ -32,14 +32,9 @@ export function UpsertField({ children, field, schemaId }: { children: ReactNode
 					<FormError value={state?.errors.name} />
 				</div>
 				<div className='grid gap-2'>
-					<Label htmlFor='description'>Description</Label>
-					<Textarea
-						id='name'
-						name='description'
-						placeholder='The first, middle, and last name of a user'
-						defaultValue={field?.description}
-					/>
-					<FormError value={state?.errors.description} />
+					<Label htmlFor='desc'>Description</Label>
+					<Textarea id='name' name='desc' placeholder='The first, middle, and last name of a user' defaultValue={field?.desc} />
+					<FormError value={state?.errors.desc} />
 				</div>
 				<div className='grid gap-2'>
 					<Label htmlFor='type'>Type</Label>

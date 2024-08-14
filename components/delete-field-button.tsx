@@ -1,12 +1,12 @@
 'use client'
 
 import { deleteField } from '@/lib/actions'
-import { Row } from '@/lib/supabase/types'
+import { Field } from '@prisma/client'
 import { Trash2Icon } from 'lucide-react'
 import { ConfirmDelete } from './confirm-delete'
 import { DropdownMenuItem } from './ui/dropdown-menu'
 
-export function DeleteFieldButton({ fieldId }: { fieldId: Row<'fields'>['id'] }) {
+export function DeleteFieldButton({ fieldId }: { fieldId: Field['id'] }) {
 	return (
 		<ConfirmDelete action={deleteField.bind(null, { id: fieldId })}>
 			<DropdownMenuItem onSelect={(e) => e.preventDefault()}>

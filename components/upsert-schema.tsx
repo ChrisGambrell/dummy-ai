@@ -2,7 +2,7 @@
 
 import { upsertSchema } from '@/lib/actions'
 import { useCloseOnComplete } from '@/lib/hooks'
-import { Row } from '@/lib/supabase/types'
+import { Schema } from '@prisma/client'
 import { ReactNode } from 'react'
 import { useFormState } from 'react-dom'
 import { ActionButton } from './action-button'
@@ -13,7 +13,7 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
 
-export function UpsertSchema({ children, schema }: { children: ReactNode; schema?: Row<'schemas'> }) {
+export function UpsertSchema({ children, schema }: { children: ReactNode; schema?: Schema }) {
 	const [state, action] = useFormState(upsertSchema, null)
 	const [open, onOpenChange] = useCloseOnComplete(state)
 
@@ -28,14 +28,9 @@ export function UpsertSchema({ children, schema }: { children: ReactNode; schema
 					<FormError value={state?.errors.name} />
 				</div>
 				<div className='grid gap-2'>
-					<Label htmlFor='description'>Description</Label>
-					<Textarea
-						id='name'
-						name='description'
-						placeholder='A user of a social media application.'
-						defaultValue={schema?.description}
-					/>
-					<FormError value={state?.errors.description} />
+					<Label htmlFor='desc'>Description</Label>
+					<Textarea id='name' name='desc' placeholder='A user of a social media application.' defaultValue={schema?.desc} />
+					<FormError value={state?.errors.desc} />
 				</div>
 				<DialogFooter>
 					<ActionButton className='w-full md:w-fit'>Save</ActionButton>

@@ -2,26 +2,24 @@
 
 import { openai } from '@ai-sdk/openai'
 import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
+import { Field, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z, ZodTypeAny } from 'zod'
-import { createClient } from './supabase/server'
-import { Row } from './supabase/types'
+import prisma from './db'
 import { upsertFieldSchema, upsertSchemaSchema } from './validators'
 
 const GENERATE_DATA_LIMIT = 10
 
-export async function generateData({ id }: { id: Row<'schemas'>['id'] }) {
-	const supabase = createClient()
-
-	const { data: schema, error } = await supabase.from('schemas').select('*, fields(*)').eq('id', id).single()
-	if (error) redirect(getErrorRedirect('/', `Failed to fetch schema: ${error.message}`))
+export async function generateData({ id }: { id: Schema['id'] }) {
+	const schema = await prisma.schema.findUnique({ where: { id }, include: { fields: true } })
+	if (!schema) redirect(getErrorRedirect('/', `Failed to fetch schema.`))
 
 	const { object } = await generateObject({
 		model: openai('gpt-4o-mini'),
 		schemaName: schema.name,
-		schemaDescription: schema.description,
+		schemaDescription: schema.desc,
 		schema: z.object({
 			data: z.array(
 				z.object(
@@ -40,7 +38,7 @@ export async function generateData({ id }: { id: Row<'schemas'>['id'] }) {
 						else if (field.type === 'string') v = z.string()
 						else throw new Error(`Invalid field type.`)
 
-						v = v.describe(`${field.unique ? '** UNIQUE ** ' : ''}${field.description}`)
+						v = v.describe(`${field.unique ? '** UNIQUE ** ' : ''}${field.desc}`)
 						if (field.nullable) acc[field.name] = v.nullable()
 						else acc[field.name] = v
 						return acc
@@ -48,13 +46,12 @@ export async function generateData({ id }: { id: Row<'schemas'>['id'] }) {
 				)
 			),
 		}),
-		prompt: `Generate ${GENERATE_DATA_LIMIT} rows of data for the ${schema.name} schema (${schema.description})`,
+		prompt: `Generate ${GENERATE_DATA_LIMIT} rows of data for the ${schema.name} schema (${schema.desc})`,
 	})
 
-	const { data: gen, error: genError } = await supabase.from('generations').insert({ schema_id: id, data: object.data }).select().single()
-	if (genError) redirect(getErrorRedirect('/', `Failed to save generated data: ${genError.message}`))
+	const generation = await prisma.generation.create({ data: { schemaId: id, data: object.data } })
 
-	redirect(`/generations/${gen.id}`)
+	redirect(`/generations/${generation.id}`)
 }
 
 // MARK: Schemas
@@ -63,10 +60,8 @@ export async function upsertSchema(_prevState: any, formData: FormData) {
 	const { data, errors } = parseFormData(formData, upsertSchemaSchema)
 	if (errors) return { errors }
 
-	const supabase = createClient()
-
-	const { error } = await supabase.from('schemas').upsert(data)
-	if (error) redirect(getErrorRedirect('/', `Failed to upsert ${data.name}: ${error.message}`))
+	if (!data.id) await prisma.schema.create({ data })
+	else await prisma.schema.update({ where: { id: data.id }, data })
 
 	revalidatePath('/')
 	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
@@ -76,22 +71,18 @@ export async function upsertSchema(_prevState: any, formData: FormData) {
 
 export async function upsertField(_prevState: any, formData: FormData) {
 	const { data, errors } = parseFormData(formData, upsertFieldSchema)
+	console.log({ data, errors })
 	if (errors) return { errors }
 
-	const supabase = createClient()
-
-	const { error } = await supabase.from('fields').upsert(data)
-	if (error) redirect(getErrorRedirect('/', `Failed to upsert ${data.name}: ${error.message}`))
+	if (!data.id) await prisma.field.create({ data })
+	else await prisma.field.update({ where: { id: data.id }, data })
 
 	revalidatePath('/')
 	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
 }
 
-export async function deleteField({ id }: { id: Row<'fields'>['id'] }) {
-	const supabase = createClient()
-
-	const { error } = await supabase.from('fields').delete().eq('id', id)
-	if (error) redirect(getErrorRedirect('/', `Failed to delete field: ${error.message}`))
+export async function deleteField({ id }: { id: Field['id'] }) {
+	await prisma.field.delete({ where: { id } })
 
 	revalidatePath('/')
 	redirect(getSuccessRedirect('/', 'Successfully deleted field'))
