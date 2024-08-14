@@ -42,7 +42,7 @@ model Field {
   unique   Boolean   @default(false)
   options  String[]  @default([])
 
-  schema Schema @relation(fields: [schemaId], references: [id])
+  schema Schema @relation(fields: [schemaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Generation {
@@ -53,5 +53,5 @@ model Generation {
 
   data Json[]
 
-  schema Schema @relation(fields: [schemaId], references: [id])
+  schema Schema @relation(fields: [schemaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

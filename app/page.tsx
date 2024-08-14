@@ -6,7 +6,7 @@ import { PlusIcon } from 'lucide-react'
 
 export default async function RootPage() {
 	const schemas = await prisma.schema.findMany({
-		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: true },
+		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } } },
 		orderBy: { createdAt: 'desc' },
 	})
 

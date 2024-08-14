@@ -1,8 +1,9 @@
-import { generateData } from '@/lib/actions'
+import { addGeneration, deleteGeneration } from '@/lib/actions'
 import { Prisma } from '@prisma/client'
-import { EditIcon, EllipsisIcon, EyeIcon, PlusIcon, RefreshCcw } from 'lucide-react'
+import { EditIcon, EllipsisIcon, EyeIcon, PlusIcon, RefreshCcw, Trash2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { ActionButton } from './action-button'
+import { ConfirmDelete } from './confirm-delete'
 import { DeleteFieldButton } from './delete-field-button'
 import { Button, buttonVariants } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
@@ -28,7 +29,7 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 						<CardDescription>{schema.desc}</CardDescription>
 					</div>
 					<div className='flex items-center gap-2'>
-						<form action={generateData.bind(null, { id: schema.id })}>
+						<form action={addGeneration.bind(null, { id: schema.id })}>
 							<ActionButton>
 								<RefreshCcw className='size-4 mr-2' />
 								<span>Generate</span>
@@ -93,14 +94,18 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 									<div key={gen.id} className='text-sm py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4'>
 										<div>{new Date(gen.createdAt).toLocaleString()}</div>
 										<div>{gen.data.length} item(s)</div>
-										<div className='flex items-center'>
+										<div className='flex items-center gap-1'>
 											{/* TODO: Make dialog instead of page */}
-											<Link
-												className={buttonVariants({ variant: 'secondary', className: 'h-8 px-2' })}
-												href={`/generations/${gen.id}`}>
-												<EyeIcon className='size-4' />
+											<Link href={`/generations/${gen.id}`}>
+												<Button className='h-8 px-2' variant='secondary'>
+													<EyeIcon className='size-4' />
+												</Button>
 											</Link>
-											{/* TODO: Delete generation */}
+											<ConfirmDelete action={deleteGeneration.bind(null, { id: gen.id })}>
+												<Button className='h-8 px-2' variant='secondary'>
+													<Trash2Icon className='size-4' />
+												</Button>
+											</ConfirmDelete>
 										</div>
 									</div>
 								))}

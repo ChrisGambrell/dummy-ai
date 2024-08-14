@@ -2,7 +2,7 @@
 
 import { openai } from '@ai-sdk/openai'
 import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
-import { Field, Schema } from '@prisma/client'
+import { Field, Generation, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -12,7 +12,43 @@ import { upsertFieldSchema, upsertSchemaSchema } from './validators'
 
 const GENERATE_DATA_LIMIT = 10
 
-export async function generateData({ id }: { id: Schema['id'] }) {
+// MARK: Schemas
+
+export async function upsertSchema(_prevState: any, formData: FormData) {
+	const { data, errors } = parseFormData(formData, upsertSchemaSchema)
+	if (errors) return { errors }
+
+	if (!data.id) await prisma.schema.create({ data })
+	else await prisma.schema.update({ where: { id: data.id }, data })
+
+	revalidatePath('/')
+	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
+}
+
+// MARK: Fields
+
+export async function upsertField(_prevState: any, formData: FormData) {
+	const { data, errors } = parseFormData(formData, upsertFieldSchema)
+	console.log({ data, errors })
+	if (errors) return { errors }
+
+	if (!data.id) await prisma.field.create({ data })
+	else await prisma.field.update({ where: { id: data.id }, data })
+
+	revalidatePath('/')
+	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
+}
+
+export async function deleteField({ id }: { id: Field['id'] }) {
+	await prisma.field.delete({ where: { id } })
+
+	revalidatePath('/')
+	redirect(getSuccessRedirect('/', 'Successfully deleted field'))
+}
+
+// MARK: Generations
+
+export async function addGeneration({ id }: { id: Schema['id'] }) {
 	const schema = await prisma.schema.findUnique({ where: { id }, include: { fields: true } })
 	if (!schema) redirect(getErrorRedirect('/', `Failed to fetch schema.`))
 
@@ -49,41 +85,15 @@ export async function generateData({ id }: { id: Schema['id'] }) {
 		prompt: `Generate ${GENERATE_DATA_LIMIT} rows of data for the ${schema.name} schema (${schema.desc})`,
 	})
 
-	const generation = await prisma.generation.create({ data: { schemaId: id, data: object.data } })
-
-	redirect(`/generations/${generation.id}`)
-}
-
-// MARK: Schemas
-
-export async function upsertSchema(_prevState: any, formData: FormData) {
-	const { data, errors } = parseFormData(formData, upsertSchemaSchema)
-	if (errors) return { errors }
-
-	if (!data.id) await prisma.schema.create({ data })
-	else await prisma.schema.update({ where: { id: data.id }, data })
+	await prisma.generation.create({ data: { schemaId: id, data: object.data } })
 
 	revalidatePath('/')
-	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
+	redirect(getSuccessRedirect('/', 'Successfully generated data'))
 }
 
-// MARK: Fields
-
-export async function upsertField(_prevState: any, formData: FormData) {
-	const { data, errors } = parseFormData(formData, upsertFieldSchema)
-	console.log({ data, errors })
-	if (errors) return { errors }
-
-	if (!data.id) await prisma.field.create({ data })
-	else await prisma.field.update({ where: { id: data.id }, data })
+export async function deleteGeneration({ id }: { id: Generation['id'] }) {
+	await prisma.generation.delete({ where: { id } })
 
 	revalidatePath('/')
-	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
-}
-
-export async function deleteField({ id }: { id: Field['id'] }) {
-	await prisma.field.delete({ where: { id } })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', 'Successfully deleted field'))
+	redirect(getSuccessRedirect('/', 'Successfully deleted generation'))
 }
