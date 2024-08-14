@@ -13,7 +13,7 @@ export const env = createEnv({
 		POSTGRES_PASSWORD: z.string().min(1),
 		POSTGRES_DATABASE: z.string().min(1),
 	},
-	client: {},
+	client: { NEXT_PUBLIC_SITE_URL: z.string().url() },
 	runtimeEnv: {
 		OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 		POSTGRES_URL: process.env.POSTGRES_URL,
@@ -24,5 +24,7 @@ export const env = createEnv({
 		POSTGRES_HOST: process.env.POSTGRES_HOST,
 		POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
 		POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+
+		NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
 	},
 })
