@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ActionButton } from './action-button'
 import { ConfirmDelete } from './confirm-delete'
 import { DeleteFieldButton } from './delete-field-button'
+import { GenerationDialog } from './generation-dialog'
 import { Button, buttonVariants } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import {
@@ -95,12 +96,11 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 										<div>{new Date(gen.createdAt).toLocaleString()}</div>
 										<div>{gen.data.length} item(s)</div>
 										<div className='flex items-center gap-1'>
-											{/* TODO: Make dialog instead of page */}
-											<Link href={`/generations/${gen.id}`}>
+											<GenerationDialog generation={gen} name={schema.name}>
 												<Button className='h-8 px-2' variant='secondary'>
 													<EyeIcon className='size-4' />
 												</Button>
-											</Link>
+											</GenerationDialog>
 											<ConfirmDelete action={deleteGeneration.bind(null, { id: gen.id })}>
 												<Button className='h-8 px-2' variant='secondary'>
 													<Trash2Icon className='size-4' />
