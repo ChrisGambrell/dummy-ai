@@ -37,7 +37,6 @@ export async function deleteSchema({ id }: { id: Schema['id'] }) {
 
 export async function upsertField(_prevState: any, formData: FormData) {
 	const { data, errors } = parseFormData(formData, upsertFieldSchema)
-	console.log({ data, errors })
 	if (errors) return { errors }
 
 	if (!data.id) await prisma.field.create({ data })
