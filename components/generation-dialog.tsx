@@ -17,7 +17,7 @@ export function GenerationDialog({
 			title={`Generation of ${schemaName}`}
 			description={`Generated on ${generation.createdAt.toLocaleString()}`}
 			trigger={children}>
-			<pre>{JSON.stringify(generation.data, null, 2)}</pre>
+			<pre className='text-wrap'>{JSON.stringify(generation.data, null, 2)}</pre>
 		</DrawerDialog>
 	)
 }
