@@ -6,7 +6,7 @@ import { Field, Generation, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import * as v from 'voca'
+import camelCase from 'voca/camel_case'
 import { z, ZodTypeAny } from 'zod'
 import prisma from './db'
 import { upsertFieldSchema, upsertSchemaSchema } from './validators'
@@ -62,7 +62,7 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 
 	const { object } = await generateObject({
 		model: openai('gpt-4o-mini'),
-		schemaName: v.camelCase(schema.name),
+		schemaName: camelCase(schema.name),
 		schemaDescription: schema.desc,
 		schema: z.object({
 			data: z.array(
