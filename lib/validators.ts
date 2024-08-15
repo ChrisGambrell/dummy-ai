@@ -23,6 +23,11 @@ export const upsertFieldSchema = z.object({
 		.min(1)
 		.optional()
 		.transform((arg) => (!arg?.trim() ? [] : arg.split(','))),
+	structure: z
+		.string()
+		.min(1)
+		.optional()
+		.transform((arg) => (!arg?.trim() ? null : arg)),
 	nullable: z
 		.string()
 		.optional()

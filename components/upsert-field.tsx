@@ -62,6 +62,18 @@ export function UpsertField({ children, field, schemaId }: { children: ReactNode
 						<FormError value={state?.errors.options} />
 					</div>
 				)}
+				{type === 'json' && (
+					<div className='grid gap-2'>
+						<Label htmlFor='structure'>Structure</Label>
+						<Input
+							id='structure'
+							name='structure'
+							placeholder='{ "hello": string, "foo": integer }'
+							defaultValue={field?.structure ?? ''}
+						/>
+						<FormError value={state?.errors.structure} />
+					</div>
+				)}
 				<div className='flex items-center space-x-2'>
 					<Switch id='nullable' name='nullable' defaultChecked={field?.nullable} />
 					<Label htmlFor='nullable'>Nullable</Label>

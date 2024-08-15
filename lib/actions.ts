@@ -86,7 +86,7 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 						v = v.describe(
 							`${field.type === 'json' ? '** FIELD SHOULD BE JSON ** ' : ''}${field.unique ? '** UNIQUE ** ' : ''}${
 								field.desc
-							}`
+							}${field.type === 'json' && field.structure ? ` (structure: ${field.structure})` : ''}`
 						)
 						if (field.nullable && field.type !== 'date') acc[field.name] = v.nullable()
 						else acc[field.name] = v

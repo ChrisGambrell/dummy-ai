@@ -6,6 +6,7 @@ import { ConfirmDelete } from './confirm-delete'
 import { DeleteFieldButton } from './delete-field-button'
 import { FormatDate } from './format-date'
 import { GenerationDialog } from './generation-dialog'
+import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import {
@@ -75,12 +76,15 @@ function FieldsList({ fields }: { fields: Array<Field> }) {
 			{fields.map((field) => (
 				<div key={field.id} className='py-3 first:pt-0 last:pb-0 flex items-center gap-4'>
 					<div className='flex-1'>
-						<div>
-							<span className='font-bold mr-2'>{field.name}</span>
-							<span className='text-muted-foreground text-xs'>
+						<div className='flex items-center gap-2'>
+							<span className='font-bold'>{field.name}</span>
+							<Badge className='' variant='secondary'>
 								{field.type === 'enum' ? field.options?.join(', ') : field.type}
-							</span>
+							</Badge>
+							{field.nullable && <Badge variant='outline'>nullable</Badge>}
+							{field.unique && <Badge>unique</Badge>}
 						</div>
+						{field.structure && <div className='text-muted-foreground text-xs mb-1'>{field.structure}</div>}
 						<div className='text-muted-foreground text-sm'>{field.desc}</div>
 					</div>
 					<div className='flex-shrink-0 flex items-center'>
