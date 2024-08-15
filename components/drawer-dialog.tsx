@@ -26,7 +26,7 @@ export function DrawerDialog({
 }: {
 	children: ReactNode
 	className?: string
-	description?: string
+	description?: ReactNode
 	title?: string
 	trigger: ReactNode
 	open?: boolean

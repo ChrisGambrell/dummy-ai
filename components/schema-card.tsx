@@ -1,6 +1,5 @@
 import { addGeneration, deleteGeneration, deleteSchema } from '@/lib/actions'
 import { Field, Generation, Prisma, Schema } from '@prisma/client'
-import { format, fromUnixTime } from 'date-fns'
 import { EditIcon, EllipsisIcon, EyeIcon, PlusIcon, RefreshCcw, Trash2Icon } from 'lucide-react'
 import { ActionButton } from './action-button'
 import { ConfirmDelete } from './confirm-delete'
@@ -117,9 +116,8 @@ function GenerationsList({ generations, schemaName }: { generations: Array<Gener
 			<div className='grid divide-y'>
 				{generations.map((gen) => (
 					<div key={gen.id} className='text-sm py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4'>
-						<div className='text-xs'>{format(gen.createdAt, 'yyyy-MM-dd h:mm:ss a')}</div>
-						<div className='text-xs'>
-							<FormatDate date={gen.createdAt} format='yyyy-MM-dd h:mm:ss a' />
+						<div>
+							<FormatDate date={gen.createdAt} />
 						</div>
 						<div>{gen.data.length} item(s)</div>
 						<div className='flex items-center gap-1'>
