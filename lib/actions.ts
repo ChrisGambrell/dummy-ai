@@ -77,12 +77,17 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 								.date()
 								.transform((arg) => new Date(arg))
 						else if (field.type === 'decimal') v = z.number()
-						else if (field.type === 'integer') v = z.number().int()
 						else if (field.type === 'enum') v = z.enum(field.options as [string, ...string[]])
+						else if (field.type === 'integer') v = z.number().int()
+						else if (field.type === 'json') v = z.string().transform((arg) => JSON.parse(arg))
 						else if (field.type === 'string') v = z.string()
 						else throw new Error(`Invalid field type.`)
 
-						v = v.describe(`${field.unique ? '** UNIQUE ** ' : ''}${field.desc}`)
+						v = v.describe(
+							`${field.type === 'json' ? '** FIELD SHOULD BE JSON ** ' : ''}${field.unique ? '** UNIQUE ** ' : ''}${
+								field.desc
+							}`
+						)
 						if (field.nullable && field.type !== 'date') acc[field.name] = v.nullable()
 						else acc[field.name] = v
 						return acc

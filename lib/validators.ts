@@ -17,7 +17,7 @@ export const upsertFieldSchema = z.object({
 	schemaId: z.string(),
 	name: z.string().min(1),
 	desc: z.string().min(1),
-	type: z.enum(['boolean', 'date', 'decimal', 'enum', 'integer', 'string']),
+	type: z.enum(['boolean', 'date', 'decimal', 'enum', 'integer', 'json', 'string']),
 	options: z
 		.string()
 		.min(1)

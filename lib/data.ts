@@ -4,7 +4,7 @@ export type Request = {
 	amount: number
 	fields: Array<
 		{ name: string; description: string; nullable?: boolean; unique?: boolean } & (
-			| { type: 'boolean' | 'date' | 'decimal' | 'integer' | 'string' }
+			| { type: 'boolean' | 'date' | 'decimal' | 'integer' | 'json' | 'string' }
 			| { type: 'enum'; options: string[] }
 		)
 	>

@@ -48,6 +48,7 @@ export function UpsertField({ children, field, schemaId }: { children: ReactNode
 							<SelectItem value='decimal'>decimal</SelectItem>
 							<SelectItem value='enum'>enum</SelectItem>
 							<SelectItem value='integer'>integer</SelectItem>
+							<SelectItem value='json'>json</SelectItem>
 							<SelectItem value='string'>string</SelectItem>
 						</SelectContent>
 					</Select>

@@ -26,6 +26,7 @@ enum FieldType {
   decimal
   enum
   integer
+  json
   string
 }
 
