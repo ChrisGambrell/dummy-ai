@@ -6,6 +6,7 @@ import { Field, Generation, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import * as v from 'voca'
 import { z, ZodTypeAny } from 'zod'
 import prisma from './db'
 import { upsertFieldSchema, upsertSchemaSchema } from './validators'
@@ -61,7 +62,7 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 
 	const { object } = await generateObject({
 		model: openai('gpt-4o-mini'),
-		schemaName: schema.name,
+		schemaName: v.camelCase(schema.name),
 		schemaDescription: schema.desc,
 		schema: z.object({
 			data: z.array(
@@ -82,7 +83,7 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 						else throw new Error(`Invalid field type.`)
 
 						v = v.describe(`${field.unique ? '** UNIQUE ** ' : ''}${field.desc}`)
-						if (field.nullable) acc[field.name] = v.nullable()
+						if (field.nullable && field.type !== 'date') acc[field.name] = v.nullable()
 						else acc[field.name] = v
 						return acc
 					}, {} as any)
