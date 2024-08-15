@@ -1,11 +1,11 @@
 import { addGeneration, deleteGeneration, deleteSchema } from '@/lib/actions'
 import { Field, Generation, Prisma, Schema } from '@prisma/client'
 import { format, fromUnixTime } from 'date-fns'
-import { formatInTimeZone } from 'date-fns-tz'
 import { EditIcon, EllipsisIcon, EyeIcon, PlusIcon, RefreshCcw, Trash2Icon } from 'lucide-react'
 import { ActionButton } from './action-button'
 import { ConfirmDelete } from './confirm-delete'
 import { DeleteFieldButton } from './delete-field-button'
+import { FormatDate } from './format-date'
 import { GenerationDialog } from './generation-dialog'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
@@ -118,9 +118,8 @@ function GenerationsList({ generations, schemaName }: { generations: Array<Gener
 				{generations.map((gen) => (
 					<div key={gen.id} className='text-sm py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4'>
 						<div className='text-xs'>{format(gen.createdAt, 'yyyy-MM-dd h:mm:ss a')}</div>
-						<div className='text-xs'>{format(fromUnixTime(gen.createdAt.getTime() / 1000), 'yyyy-MM-dd h:mm:ss a')}</div>
 						<div className='text-xs'>
-							{formatInTimeZone(gen.createdAt, Intl.DateTimeFormat().resolvedOptions().timeZone, 'yyyy-MM-dd h:mm:ss a')}
+							<FormatDate date={gen.createdAt} format='yyyy-MM-dd h:mm:ss a' />
 						</div>
 						<div>{gen.data.length} item(s)</div>
 						<div className='flex items-center gap-1'>
