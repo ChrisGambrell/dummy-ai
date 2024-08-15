@@ -11,7 +11,7 @@ export default async function RootPage() {
 	})
 
 	return (
-		<div className='grid gap-6 max-w-3xl mx-auto mt-12 mb-8'>
+		<div className='grid gap-4 md:gap-6 max-w-3xl mx-auto my-4 md:my-8 px-4'>
 			<div className='ml-auto'>
 				<UpsertSchema>
 					<Button>

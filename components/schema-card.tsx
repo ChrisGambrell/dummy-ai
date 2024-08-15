@@ -24,14 +24,14 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 	return (
 		<Card>
 			<CardHeader>
-				<div className='flex justify-between gap-4'>
+				<div className='flex flex-col sm:justify-between gap-4'>
 					<div className='space-y-1.5'>
 						<CardTitle>{schema.name}</CardTitle>
 						<CardDescription>{schema.desc}</CardDescription>
 					</div>
-					<div className='flex items-center gap-2'>
+					<div className='grid gap-2 sm:grid-cols-2'>
 						<form action={addGeneration.bind(null, { id: schema.id })}>
-							<ActionButton>
+							<ActionButton className='w-full'>
 								<RefreshCcw className='size-4 mr-2' />
 								<span>Generate</span>
 							</ActionButton>

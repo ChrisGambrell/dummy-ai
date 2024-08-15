@@ -32,7 +32,9 @@ export function ConfirmDelete({ action: _action, children }: { action: () => Pro
 				<AlertDialogFooter>
 					<AlertDialogCancel>Cancel</AlertDialogCancel>
 					<form action={action}>
-						<ActionButton variant='destructive'>Confirm</ActionButton>
+						<ActionButton className='w-full' variant='destructive'>
+							Confirm
+						</ActionButton>
 					</form>
 				</AlertDialogFooter>
 			</AlertDialogContent>
