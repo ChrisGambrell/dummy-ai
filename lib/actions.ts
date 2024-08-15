@@ -25,6 +25,13 @@ export async function upsertSchema(_prevState: any, formData: FormData) {
 	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
 }
 
+export async function deleteSchema({ id }: { id: Schema['id'] }) {
+	await prisma.schema.delete({ where: { id } })
+
+	revalidatePath('/')
+	redirect(getSuccessRedirect('/', 'Successfully deleted schema'))
+}
+
 // MARK: Fields
 
 export async function upsertField(_prevState: any, formData: FormData) {
