@@ -4,6 +4,9 @@ import { UpsertSchema } from '@/components/upsert-schema'
 import prisma from '@/lib/db'
 import { PlusIcon } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function RootPage() {
 	const schemas = await prisma.schema.findMany({
 		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } } },
