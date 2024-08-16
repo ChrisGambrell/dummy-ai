@@ -17,17 +17,17 @@ env:
     VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-  build-project:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Setup Node
-        uses: actions/setup-node@v3
-      - name: Install dependencies
-        run: npm ci
-      - name: Build the app
-        run: npm run build
+  # build-project:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v3
+  #     - name: Install dependencies
+  #       run: npm ci
+  #     - name: Build the app
+  #       run: npm run build
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -43,7 +43,8 @@ jobs:
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
   deploy-migration:
-    needs: [build-project, deploy-production]
+    # needs: [build-project, deploy-production]
+    needs: [deploy-production]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
