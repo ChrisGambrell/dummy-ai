@@ -9,7 +9,7 @@ export const env = createEnv({
 		AUTH_RESEND_KEY: z.string().min(1),
 
 		OPENAI_API_KEY: z.string().min(1),
-		POSTGRES_PRISMA_URL: z.string().url(),
+		POSTGRES_PRISMA_URL: z.string().url().startsWith('postgresql://'),
 	},
 	client: { NEXT_PUBLIC_SITE_URL: z.string().url() },
 	runtimeEnv: {
