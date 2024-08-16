@@ -4,6 +4,7 @@ import { EmptyState } from '@/components/empty-state'
 import { SchemaCard } from '@/components/schema-card'
 import { Button } from '@/components/ui/button'
 import { UpsertSchema } from '@/components/upsert-schema'
+import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
 import { LogOutIcon, PlusIcon } from 'lucide-react'
 
@@ -11,6 +12,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function RootPage() {
+	const user = await auth()
 	const schemas = await prisma.schema.findMany({
 		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } } },
 		orderBy: { createdAt: 'desc' },
@@ -18,6 +20,7 @@ export default async function RootPage() {
 
 	return (
 		<div className='grid gap-4 md:gap-6 max-w-3xl mx-auto my-4 md:my-8 px-4'>
+			{user.id}
 			<div className='ml-auto flex items-center gap-2'>
 				<UpsertSchema>
 					<Button>
