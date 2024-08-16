@@ -12,7 +12,7 @@ model Schema {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
-  userId    String   @default("clzwsfdk30000pwmfxn7hvvs7")
+  userId    String
 
   name String
   desc String

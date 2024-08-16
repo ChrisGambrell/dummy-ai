@@ -13,14 +13,15 @@ export const revalidate = 0
 
 export default async function RootPage() {
 	const user = await auth()
+
 	const schemas = await prisma.schema.findMany({
+		where: { userId: user.id },
 		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } } },
 		orderBy: { createdAt: 'desc' },
 	})
 
 	return (
 		<div className='grid gap-4 md:gap-6 max-w-3xl mx-auto my-4 md:my-8 px-4'>
-			{user.id}
 			<div className='ml-auto flex items-center gap-2'>
 				<UpsertSchema>
 					<Button>

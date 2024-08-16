@@ -10,6 +10,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import camelCase from 'voca/camel_case'
 import { z, ZodTypeAny } from 'zod'
+import { auth } from './auth'
 import prisma from './db'
 import { upsertFieldSchema, upsertSchemaSchema } from './validators'
 
@@ -20,8 +21,9 @@ const GENERATE_DATA_LIMIT = 10
 export async function upsertSchema(_prevState: any, formData: FormData) {
 	const { data, errors } = parseFormData(formData, upsertSchemaSchema)
 	if (errors) return { errors }
+	const user = await auth()
 
-	if (!data.id) await prisma.schema.create({ data })
+	if (!data.id) await prisma.schema.create({ data: { ...data, userId: user.id } })
 	else await prisma.schema.update({ where: { id: data.id }, data })
 
 	revalidatePath('/')
