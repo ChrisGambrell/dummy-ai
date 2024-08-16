@@ -1,3 +1,5 @@
+// TODO: Move this to actions folder
+
 'use server'
 
 import { openai } from '@ai-sdk/openai'
