@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import Link from 'next/link'
 import { LoginClient } from './client'
 
 export default function LoginPage() {
@@ -11,12 +10,6 @@ export default function LoginPage() {
 			</CardHeader>
 			<CardContent>
 				<LoginClient />
-				<div className='mt-4 text-center text-sm'>
-					Don&apos;t have an account?{' '}
-					<Link href='/register' className='underline'>
-						Sign up
-					</Link>
-				</div>
 			</CardContent>
 		</Card>
 	)
