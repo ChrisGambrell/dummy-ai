@@ -71,7 +71,6 @@ model User {
   image String?
 
   emailVerified DateTime?
-  passwordHash  String?
 
   schemas Schema[]
 
