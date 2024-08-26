@@ -1,5 +1,4 @@
 import { logout } from '@/actions/auth'
-import icon from '@/app/icon.png'
 import { EmptyState } from '@/components/empty-state'
 import { SchemaCard } from '@/components/schema-card'
 import { Button } from '@/components/ui/button'
@@ -13,8 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { UpsertSchema } from '@/components/upsert-schema'
 import prisma from '@/lib/db'
-import { LogOutIcon, PlusIcon, User2Icon } from 'lucide-react'
-import Image from 'next/image'
+import { BirdIcon, LogOutIcon, PlusIcon, User2Icon } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -28,7 +26,10 @@ export default async function RootPage() {
 	return (
 		<div className='grid gap-4 md:gap-6 max-w-3xl mx-auto my-4 md:my-8 px-4'>
 			<div className='flex gap-4 items-end'>
-				<Image className='rounded-lg size-10 sm:size-12' src={icon} width={40} height={40} alt='Dummy AI' />
+				<h1 className='text-3xl font-black'>
+					<BirdIcon className='size-8' />
+					<span>DummyAI</span>
+				</h1>
 				<div className='ml-auto flex items-center gap-3'>
 					<UpsertSchema>
 						<Button>
