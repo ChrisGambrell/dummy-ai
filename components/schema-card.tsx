@@ -1,4 +1,7 @@
-import { addGeneration, deleteField, deleteGeneration, deleteRule, deleteSchema } from '@/lib/actions'
+import { deleteField } from '@/actions/fields'
+import { addGeneration, deleteGeneration } from '@/actions/generations'
+import { deleteRule } from '@/actions/rules'
+import { deleteSchema } from '@/actions/schema'
 import { Field, Generation, Prisma, Rule, Schema } from '@prisma/client'
 import { EditIcon, EllipsisIcon, EyeIcon, FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
 import { ActionButton } from './action-button'

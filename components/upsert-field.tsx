@@ -1,6 +1,6 @@
 'use client'
 
-import { upsertField } from '@/lib/actions'
+import { upsertField } from '@/actions/fields'
 import { useCloseOnComplete } from '@/lib/hooks'
 import { Field, Schema } from '@prisma/client'
 import { ReactNode, useState } from 'react'

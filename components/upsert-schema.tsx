@@ -1,6 +1,6 @@
 'use client'
 
-import { upsertSchema } from '@/lib/actions'
+import { upsertSchema } from '@/actions/schema'
 import { useCloseOnComplete } from '@/lib/hooks'
 import { Schema } from '@prisma/client'
 import { ReactNode } from 'react'

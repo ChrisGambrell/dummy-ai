@@ -1,64 +1,17 @@
-// TODO: Move this to actions folder
-
 'use server'
 
+import { auth } from '@/lib/auth'
+import prisma from '@/lib/db'
 import { openai } from '@ai-sdk/openai'
-import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
-import { Field, Generation, Rule, Schema } from '@prisma/client'
+import { getErrorRedirect, getSuccessRedirect } from '@cgambrell/utils'
+import { Generation, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import camelCase from 'voca/camel_case'
+import { camelCase } from 'voca'
 import { z, ZodTypeAny } from 'zod'
-import { auth } from './auth'
-import prisma from './db'
-import { upsertFieldSchema, upsertRuleSchema, upsertSchemaSchema } from './validators'
 
 const GENERATE_DATA_LIMIT = 10
-
-// MARK: Schemas
-
-export async function upsertSchema(_prevState: any, formData: FormData) {
-	const { data, errors } = parseFormData(formData, upsertSchemaSchema)
-	if (errors) return { errors }
-	const user = await auth()
-
-	if (!data.id) await prisma.schema.create({ data: { ...data, userId: user.id } })
-	else await prisma.schema.update({ where: { id: data.id }, data })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
-}
-
-export async function deleteSchema({ id }: { id: Schema['id'] }) {
-	await prisma.schema.delete({ where: { id } })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', 'Successfully deleted schema'))
-}
-
-// MARK: Fields
-
-export async function upsertField(_prevState: any, formData: FormData) {
-	const { data, errors } = parseFormData(formData, upsertFieldSchema)
-	if (errors) return { errors }
-	const user = await auth()
-
-	if (!data.id) await prisma.field.create({ data: { ...data, userId: user.id } })
-	else await prisma.field.update({ where: { id: data.id }, data })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', `${data.name} upserted successfully`))
-}
-
-export async function deleteField({ id }: { id: Field['id'] }) {
-	await prisma.field.delete({ where: { id } })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', 'Successfully deleted field'))
-}
-
-// MARK: Generations
 
 export async function addGeneration({ id }: { id: Schema['id'] }) {
 	const schema = await prisma.schema.findUnique({ where: { id }, include: { fields: true, rules: true } })
@@ -112,25 +65,4 @@ export async function deleteGeneration({ id }: { id: Generation['id'] }) {
 
 	revalidatePath('/')
 	redirect(getSuccessRedirect('/', 'Successfully deleted generation'))
-}
-
-// MARK: Rules
-
-export async function upsertRule(_prevState: any, formData: FormData) {
-	const { data, errors } = parseFormData(formData, upsertRuleSchema)
-	if (errors) return { errors }
-	const user = await auth()
-
-	if (!data.id) await prisma.rule.create({ data: { ...data, userId: user.id } })
-	else await prisma.rule.update({ where: { id: data.id }, data })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', 'Rule upserted successfully'))
-}
-
-export async function deleteRule({ id }: { id: Rule['id'] }) {
-	await prisma.rule.delete({ where: { id } })
-
-	revalidatePath('/')
-	redirect(getSuccessRedirect('/', 'Successfully deleted rule'))
 }
