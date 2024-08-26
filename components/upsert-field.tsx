@@ -24,7 +24,7 @@ export function UpsertField({ children, field, schemaId }: { children: ReactNode
 		<DrawerDialog title={`${field ? 'Update' : 'Add'} Field`} trigger={children} open={open} onOpenChange={onOpenChange}>
 			<form action={action} className='grid gap-4'>
 				<input type='hidden' name='id' value={field?.id} />
-				<input type='hidden' name='schemaId' value={schemaId} />
+				<input type='hidden' name='schemaId' value={field?.schemaId ?? schemaId} />
 
 				<div className='grid gap-2'>
 					<Label htmlFor='name'>Name</Label>
@@ -33,7 +33,7 @@ export function UpsertField({ children, field, schemaId }: { children: ReactNode
 				</div>
 				<div className='grid gap-2'>
 					<Label htmlFor='desc'>Description</Label>
-					<Textarea id='name' name='desc' placeholder='The first, middle, and last name of a user' defaultValue={field?.desc} />
+					<Textarea id='desc' name='desc' placeholder='The first, middle, and last name of a user' defaultValue={field?.desc} />
 					<FormError value={state?.errors.desc} />
 				</div>
 				<div className='grid gap-2'>

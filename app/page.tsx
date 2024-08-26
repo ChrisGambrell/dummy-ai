@@ -12,7 +12,6 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { UpsertSchema } from '@/components/upsert-schema'
-import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
 import { LogOutIcon, PlusIcon, User2Icon } from 'lucide-react'
 import Image from 'next/image'
@@ -21,11 +20,8 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function RootPage() {
-	const user = await auth()
-
 	const schemas = await prisma.schema.findMany({
-		where: { userId: user.id },
-		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } } },
+		include: { fields: { orderBy: { createdAt: 'asc' } }, generations: { orderBy: { createdAt: 'desc' } }, rules: true, user: true },
 		orderBy: { createdAt: 'desc' },
 	})
 

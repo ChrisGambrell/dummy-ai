@@ -21,6 +21,7 @@ model Schema {
 
   fields      Field[]
   generations Generation[]
+  rules       Rule[]
 }
 
 enum FieldType {
@@ -38,6 +39,7 @@ model Field {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   schemaId  String
+  userId    String?
 
   name      String
   desc      String
@@ -48,6 +50,7 @@ model Field {
   structure String?
 
   schema Schema @relation(fields: [schemaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 model Generation {
@@ -55,10 +58,25 @@ model Generation {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   schemaId  String
+  userId    String?
 
   data Json[]
 
   schema Schema @relation(fields: [schemaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+}
+
+model Rule {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  schemaId  String
+  userId    String
+
+  rule String
+
+  schema Schema @relation(fields: [schemaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model User {
@@ -72,9 +90,12 @@ model User {
 
   emailVerified DateTime?
 
-  schemas Schema[]
+  generations Generation[]
+  rules       Rule[]
+  schemas     Schema[]
 
   accounts      Account[]
+  fields        Field[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]

@@ -1,9 +1,9 @@
-import { addGeneration, deleteGeneration, deleteSchema } from '@/lib/actions'
-import { Field, Generation, Prisma, Schema } from '@prisma/client'
-import { EditIcon, EllipsisIcon, EyeIcon, PlusIcon, RefreshCcw, Trash2Icon } from 'lucide-react'
+import { addGeneration, deleteField, deleteGeneration, deleteRule, deleteSchema } from '@/lib/actions'
+import { Field, Generation, Prisma, Rule, Schema } from '@prisma/client'
+import { EditIcon, EllipsisIcon, EyeIcon, FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
 import { ActionButton } from './action-button'
 import { ConfirmDelete } from './confirm-delete'
-import { DeleteFieldButton } from './delete-field-button'
+import { EmptyState } from './empty-state'
 import { FormatDate } from './format-date'
 import { GenerationDialog } from './generation-dialog'
 import { Badge } from './ui/badge'
@@ -19,9 +19,15 @@ import {
 } from './ui/dropdown-menu'
 import { Label } from './ui/label'
 import { Separator } from './ui/separator'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { UpsertField } from './upsert-field'
+import { UpsertRule } from './upsert-rule'
 
-export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ include: { fields: true; generations: true } }> }) {
+export function SchemaCard({
+	schema,
+}: {
+	schema: Prisma.SchemaGetPayload<{ include: { fields: true; generations: true; rules: true; user: true } }>
+}) {
 	return (
 		<Card>
 			<CardHeader>
@@ -29,7 +35,12 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 					<div className='flex justify-between items-start gap-4'>
 						<div className='space-y-1.5'>
 							<CardTitle>{schema.name}</CardTitle>
-							<CardDescription>{schema.desc}</CardDescription>
+							<div>
+								<CardDescription>{schema.desc}</CardDescription>
+								<CardDescription className='text-xs italic'>
+									Created by {schema.user.name} on <FormatDate date={schema.createdAt} formatStr='PPp' />
+								</CardDescription>
+							</div>
 						</div>
 						<ConfirmDelete action={deleteSchema.bind(null, { id: schema.id })}>
 							<Button size='icon' variant='secondary'>
@@ -37,25 +48,55 @@ export function SchemaCard({ schema }: { schema: Prisma.SchemaGetPayload<{ inclu
 							</Button>
 						</ConfirmDelete>
 					</div>
-					<div className='grid gap-2 sm:grid-cols-2'>
+					<div className='grid gap-2 sm:grid-cols-3'>
 						<form action={addGeneration.bind(null, { id: schema.id })}>
-							<ActionButton className='w-full'>
-								<RefreshCcw className='size-4 mr-2' />
-								<span>Generate</span>
-							</ActionButton>
+							{/* TODO: Tooltip not working */}
+							<TooltipProvider>
+								<Tooltip open={schema.fields.length > 0 ? false : undefined}>
+									<TooltipTrigger asChild>
+										<ActionButton className='w-full' disabled={schema.fields.length === 0}>
+											<RefreshCcw className='size-4 mr-2' />
+											<span>Generate</span>
+										</ActionButton>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>You must have at least one field to generate data.</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</form>
 						<UpsertField schemaId={schema.id}>
 							<Button variant='secondary'>
-								<PlusIcon className='size-4 mr-2' />
+								<FormInputIcon className='size-4 mr-2' />
 								<span>Add field</span>
 							</Button>
 						</UpsertField>
+						<UpsertRule schemaId={schema.id}>
+							<Button variant='secondary'>
+								<ScaleIcon className='size-4 mr-2' />
+								<span>Add rule</span>
+							</Button>
+						</UpsertRule>
 					</div>
 				</div>
 			</CardHeader>
 			<CardContent>
-				<FieldsList fields={schema.fields} />
+				{schema.fields.length > 0 ? (
+					<FieldsList fields={schema.fields} />
+				) : (
+					<EmptyState className='h-[100px]'>No fields yet.</EmptyState>
+				)}
 			</CardContent>
+			{schema.rules.length > 0 && (
+				<>
+					<CardContent>
+						<Separator />
+					</CardContent>
+					<CardFooter>
+						<RulesList rules={schema.rules} />
+					</CardFooter>
+				</>
+			)}
 			{schema.generations.length > 0 && (
 				<>
 					<CardContent>
@@ -98,17 +139,63 @@ function FieldsList({ fields }: { fields: Array<Field> }) {
 								<DropdownMenuLabel>Actions</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<UpsertField field={field} schemaId={field.schemaId}>
-									<DropdownMenuItem noaction>
+									<DropdownMenuItem preventDefault>
 										<EditIcon className='size-4 mr-2' />
 										<span>Edit</span>
 									</DropdownMenuItem>
 								</UpsertField>
-								<DeleteFieldButton fieldId={field.id} />
+								<ConfirmDelete action={deleteField.bind(null, { id: field.id })}>
+									<DropdownMenuItem preventDefault>
+										<Trash2Icon className='size-4 mr-2' />
+										<span>Delete</span>
+									</DropdownMenuItem>
+								</ConfirmDelete>
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</div>
 				</div>
 			))}
+		</div>
+	)
+}
+
+function RulesList({ rules }: { rules: Array<Rule> }) {
+	return (
+		<div className='grid gap-2 w-full'>
+			<Label className='text-base'>Rules</Label>
+			<div className='grid divide-y'>
+				{rules.map((rule) => (
+					<div key={rule.id} className='text-sm py-3 first:pt-0 last:pb-0 flex justify-between gap-4'>
+						{/* BUG: Overflow is bad */}
+						<div className='flex-1'>{rule.rule}</div>
+						<div className='flex-shrink-0 flex items-center'>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button className='h-8 px-2' variant='outline'>
+										<EllipsisIcon className='size-4' />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuLabel>Actions</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									<UpsertRule rule={rule} schemaId={rule.schemaId}>
+										<DropdownMenuItem preventDefault>
+											<EditIcon className='size-4 mr-2' />
+											<span>Edit</span>
+										</DropdownMenuItem>
+									</UpsertRule>
+									<ConfirmDelete action={deleteRule.bind(null, { id: rule.id })}>
+										<DropdownMenuItem preventDefault>
+											<Trash2Icon className='size-4 mr-2' />
+											<span>Delete</span>
+										</DropdownMenuItem>
+									</ConfirmDelete>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+					</div>
+				))}
+			</div>
 		</div>
 	)
 }

@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"postinstall": "npx prisma generate --no-hints"
+		"postinstall": "npx prisma generate --no-hints",
+		"studio": "npx prisma studio --browser=none"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^0.0.46",
@@ -23,6 +24,7 @@
 		"@radix-ui/react-separator": "^1.1.0",
 		"@radix-ui/react-slot": "^1.1.0",
 		"@radix-ui/react-switch": "^1.1.0",
+		"@radix-ui/react-tooltip": "^1.1.2",
 		"@t3-oss/env-nextjs": "^0.11.0",
 		"ai": "^3.3.7",
 		"class-variance-authority": "^0.7.0",

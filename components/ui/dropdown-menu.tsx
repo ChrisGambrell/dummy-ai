@@ -75,9 +75,9 @@ const DropdownMenuItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.Item>,
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
 		inset?: boolean
-		noaction?: boolean
+		preventDefault?: boolean
 	}
->(({ className, inset, noaction = false, ...props }, ref) => (
+>(({ className, inset, preventDefault = false, ...props }, ref) => (
 	<DropdownMenuPrimitive.Item
 		ref={ref}
 		className={cn(
@@ -85,7 +85,7 @@ const DropdownMenuItem = React.forwardRef<
 			inset && 'pl-8',
 			className
 		)}
-		{...(noaction ? { onSelect: (e) => e.preventDefault() } : {})}
+		{...(preventDefault ? { onSelect: (e) => e.preventDefault() } : {})}
 		{...props}
 	/>
 ))

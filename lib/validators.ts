@@ -38,3 +38,12 @@ export const upsertFieldSchema = z.object({
 		.optional()
 		.transform((arg) => (!arg?.trim() ? false : true)),
 })
+
+export const upsertRuleSchema = z.object({
+	id: z
+		.string()
+		.optional()
+		.transform((arg) => (!arg?.trim() ? undefined : arg)),
+	schemaId: z.string(),
+	rule: z.string().min(1),
+})
