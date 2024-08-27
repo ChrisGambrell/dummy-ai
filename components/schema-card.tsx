@@ -1,13 +1,14 @@
 import { deleteSchema } from '@/actions/schema'
 import { Prisma } from '@prisma/client'
-import { FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
+import { Code2Icon, FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
 import { AddGeneration } from './add-generation'
 import { ConfirmDelete } from './confirm-delete'
+import { CopySchema } from './copy-schema'
 import { EmptyState } from './empty-state'
 import { FieldsList } from './field-list'
 import { FormatDate } from './format-date'
-import { RulesList } from './fules-list'
 import { GenerationsList } from './generations-list'
+import { RulesList } from './rules-list'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Separator } from './ui/separator'
@@ -34,11 +35,18 @@ export function SchemaCard({
 								</CardDescription>
 							</div>
 						</div>
-						<ConfirmDelete action={deleteSchema.bind(null, { id: schema.id })}>
-							<Button size='icon' variant='secondary'>
-								<Trash2Icon className='size-4' />
-							</Button>
-						</ConfirmDelete>
+						<div className='flex gap-2'>
+							<CopySchema schemaId={schema.id}>
+								<Button size='icon' variant='secondary'>
+									<Code2Icon className='size-4' />
+								</Button>
+							</CopySchema>
+							<ConfirmDelete action={deleteSchema.bind(null, { id: schema.id })}>
+								<Button size='icon' variant='secondary'>
+									<Trash2Icon className='size-4' />
+								</Button>
+							</ConfirmDelete>
+						</div>
 					</div>
 					<div className='grid gap-2 sm:grid-cols-3'>
 						{/* TODO: Tooltip not working */}
