@@ -13,6 +13,18 @@ export const upsertSchemaSchema = z.object({
 	desc: z.string().min(1),
 })
 
+export const importSchemaSchema = z.object({
+	code: z
+		.string()
+		.transform((arg) => JSON.parse(arg))
+		.refine((arg) => arg.name && arg.desc, { message: 'Invalid schema' })
+		.refine(
+			(arg) => arg.fields && Array.isArray(arg.fields) && arg.fields.every((field: any) => field.name && field.desc && field.type),
+			{ message: 'Invalid fields' }
+		)
+		.refine((arg) => arg.rules && Array.isArray(arg.rules) && arg.rules.every((rule: any) => rule.rule), { message: 'Invalid rules' }),
+})
+
 export const upsertFieldSchema = z.object({
 	id: z
 		.string()
