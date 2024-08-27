@@ -6,7 +6,7 @@ import { addGenerationSchema } from '@/validators'
 import { openai } from '@ai-sdk/openai'
 import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
 import { Generation } from '@prisma/client'
-import { generateObject } from 'ai'
+import { generateObject, generateText } from 'ai'
 import _ from 'lodash'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -55,6 +55,18 @@ export async function addGeneration(_prevState: any, formData: FormData) {
 			schema.desc
 		}". Also, take these rules into consideration: ${schema.rules.map((r) => r.rule).join(';')}`,
 	})
+
+	// TODO: Add starts of data export conversion
+	// const { responseMessages } = await generateText({
+	// 	model: openai('gpt-4o-mini'),
+	// 	system: 'You are an assistant that converts JSON to CSV. Do not provide any commentary or extra text. Please ONLY return the CSV that I can parse.',
+	// system: 'You are an assistant that converts JSON to XML. Do not provide any commentary or extra text. Please ONLY return the XML that I can parse.',
+	// system: 'You are an assistant that converts JSON to SQL. Do not provide any commentary or extra text. Please ONLY return the SQL that I can parse.',
+	// system: 'You are an assistant that converts JSON to YML. Do not provide any commentary or extra text. Please ONLY return the YML that I can parse.',
+	// 	messages: [{ role: 'user', content: JSON.stringify(object.data) }],
+	// })
+
+	// console.log(responseMessages[0].content[0].text)
 
 	await prisma.generation.create({ data: { schemaId: data.schemaId, userId: user.id, data: object.data } })
 
