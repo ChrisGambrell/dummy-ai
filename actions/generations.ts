@@ -6,9 +6,9 @@ import { openai } from '@ai-sdk/openai'
 import { getErrorRedirect, getSuccessRedirect } from '@cgambrell/utils'
 import { Generation, Schema } from '@prisma/client'
 import { generateObject } from 'ai'
+import _ from 'lodash'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { camelCase } from 'voca'
 import { z, ZodTypeAny } from 'zod'
 
 const GENERATE_DATA_LIMIT = 10
@@ -20,7 +20,7 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 
 	const { object } = await generateObject({
 		model: openai('gpt-4o-mini'),
-		schemaName: camelCase(schema.name),
+		schemaName: _.camelCase(schema.name),
 		schemaDescription: schema.desc,
 		schema: z.object({
 			data: z.array(
