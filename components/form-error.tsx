@@ -1,14 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
-import toast from 'react-hot-toast'
+import { cn } from '@/lib/utils'
+import { useFormStatus } from 'react-dom'
 
-export function FormError({ hidden = false, value }: { hidden?: boolean; value: string[] | undefined }) {
-	useEffect(() => {
-		if (!hidden) return
-		if (value?.length && value.length > 0) toast.error(`FATAL: ${value[0]}`)
-	}, [hidden, value])
-
-	if (hidden || !value || !value.length) return null
-	return <div className='text-sm text-destructive'>{value[0]}</div>
+export function FormError({ value }: { value: string[] | undefined }) {
+	const { pending } = useFormStatus()
+	if (!value || !value.length) return null
+	return <div className={cn('text-sm text-destructive', { hidden: pending })}>{value[0]}</div>
 }
