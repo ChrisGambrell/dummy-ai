@@ -1,26 +1,15 @@
-import { deleteField } from '@/actions/fields'
-import { deleteGeneration } from '@/actions/generations'
-import { deleteRule } from '@/actions/rules'
 import { deleteSchema } from '@/actions/schema'
-import { Field, Generation, Prisma, Rule, Schema } from '@prisma/client'
-import { EditIcon, EllipsisIcon, EyeIcon, FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
+import { Prisma } from '@prisma/client'
+import { FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
 import { AddGeneration } from './add-generation'
 import { ConfirmDelete } from './confirm-delete'
 import { EmptyState } from './empty-state'
+import { FieldsList } from './field-list'
 import { FormatDate } from './format-date'
-import { GenerationDialog } from './generation-dialog'
-import { Badge } from './ui/badge'
+import { RulesList } from './fules-list'
+import { GenerationsList } from './generations-list'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from './ui/dropdown-menu'
-import { Label } from './ui/label'
 import { Separator } from './ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { UpsertField } from './upsert-field'
@@ -111,124 +100,5 @@ export function SchemaCard({
 				</>
 			)}
 		</Card>
-	)
-}
-
-function FieldsList({ fields }: { fields: Array<Field> }) {
-	return (
-		<div className='grid divide-y'>
-			{fields.map((field) => (
-				<div key={field.id} className='py-3 first:pt-0 last:pb-0 flex items-center gap-4'>
-					<div className='flex-1'>
-						<div className='flex items-center gap-2'>
-							<span className='font-bold'>{field.name}</span>
-							<Badge className='' variant='secondary'>
-								{field.type === 'enum' ? field.options?.join(', ') : field.type}
-							</Badge>
-							{field.nullable && <Badge variant='outline'>nullable</Badge>}
-							{field.unique && <Badge>unique</Badge>}
-						</div>
-						{field.structure && <div className='text-muted-foreground text-xs mb-1'>{field.structure}</div>}
-						<div className='text-muted-foreground text-sm'>{field.desc}</div>
-					</div>
-					<div className='flex-shrink-0 flex items-center'>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button className='h-8 px-2' variant='outline'>
-									<EllipsisIcon className='size-4' />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent>
-								<DropdownMenuLabel>Actions</DropdownMenuLabel>
-								<DropdownMenuSeparator />
-								<UpsertField field={field} schemaId={field.schemaId}>
-									<DropdownMenuItem preventDefault>
-										<EditIcon className='size-4 mr-2' />
-										<span>Edit</span>
-									</DropdownMenuItem>
-								</UpsertField>
-								<ConfirmDelete action={deleteField.bind(null, { id: field.id })}>
-									<DropdownMenuItem preventDefault>
-										<Trash2Icon className='size-4 mr-2' />
-										<span>Delete</span>
-									</DropdownMenuItem>
-								</ConfirmDelete>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
-				</div>
-			))}
-		</div>
-	)
-}
-
-function RulesList({ rules }: { rules: Array<Rule> }) {
-	return (
-		<div className='grid gap-2 w-full'>
-			<Label className='text-base'>Rules</Label>
-			<div className='grid divide-y'>
-				{rules.map((rule) => (
-					<div key={rule.id} className='text-sm py-3 first:pt-0 last:pb-0 flex justify-between gap-4'>
-						{/* BUG: Overflow is bad */}
-						<div className='flex-1'>{rule.rule}</div>
-						<div className='flex-shrink-0 flex items-center'>
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<Button className='h-8 px-2' variant='outline'>
-										<EllipsisIcon className='size-4' />
-									</Button>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<DropdownMenuLabel>Actions</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<UpsertRule rule={rule} schemaId={rule.schemaId}>
-										<DropdownMenuItem preventDefault>
-											<EditIcon className='size-4 mr-2' />
-											<span>Edit</span>
-										</DropdownMenuItem>
-									</UpsertRule>
-									<ConfirmDelete action={deleteRule.bind(null, { id: rule.id })}>
-										<DropdownMenuItem preventDefault>
-											<Trash2Icon className='size-4 mr-2' />
-											<span>Delete</span>
-										</DropdownMenuItem>
-									</ConfirmDelete>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
-	)
-}
-
-function GenerationsList({ generations, schemaName }: { generations: Array<Generation>; schemaName: Schema['name'] }) {
-	return (
-		<div className='grid gap-2 w-full'>
-			<Label className='text-base'>Generations</Label>
-			<div className='grid divide-y'>
-				{generations.map((gen) => (
-					<div key={gen.id} className='text-sm py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4'>
-						<div>
-							<FormatDate date={gen.createdAt} />
-						</div>
-						<div>{gen.data.length} item(s)</div>
-						<div className='flex items-center gap-1'>
-							<GenerationDialog generation={gen} schemaName={schemaName}>
-								<Button className='h-8 px-2' variant='outline'>
-									<EyeIcon className='size-4' />
-								</Button>
-							</GenerationDialog>
-							<ConfirmDelete action={deleteGeneration.bind(null, { id: gen.id })}>
-								<Button className='h-8 px-2' variant='outline'>
-									<Trash2Icon className='size-4' />
-								</Button>
-							</ConfirmDelete>
-						</div>
-					</div>
-				))}
-			</div>
-		</div>
 	)
 }
