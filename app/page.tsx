@@ -27,7 +27,7 @@ export default async function RootPage() {
 		<div className='grid gap-4 md:gap-6 max-w-3xl mx-auto my-4 md:my-8 px-4'>
 			<div className='flex gap-4 items-end'>
 				<h1 className='text-3xl font-black'>
-					<BirdIcon className='size-8' />
+					<BirdIcon className='size-8 -ml-[10px] -mb-3' />
 					<span>DummyAI</span>
 				</h1>
 				<div className='ml-auto flex items-center gap-3'>
