@@ -2,20 +2,22 @@
 
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
+import { addGenerationSchema } from '@/lib/validators'
 import { openai } from '@ai-sdk/openai'
-import { getErrorRedirect, getSuccessRedirect } from '@cgambrell/utils'
-import { Generation, Schema } from '@prisma/client'
+import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
+import { Generation } from '@prisma/client'
 import { generateObject } from 'ai'
 import _ from 'lodash'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z, ZodTypeAny } from 'zod'
 
-const GENERATE_DATA_LIMIT = 10
+export async function addGeneration(_prevState: any, formData: FormData) {
+	const { data, errors } = parseFormData(formData, addGenerationSchema)
+	if (errors) return { errors }
 
-export async function addGeneration({ id }: { id: Schema['id'] }) {
-	const schema = await prisma.schema.findUnique({ where: { id }, include: { fields: true, rules: true } })
-	if (!schema) redirect(getErrorRedirect('/', `Failed to fetch schema.`))
+	const schema = await prisma.schema.findUnique({ where: { id: data.schemaId }, include: { fields: true, rules: true } })
+	if (!schema) redirect(getErrorRedirect('/', 'Failed to fetch schema.'))
 	const user = await auth()
 
 	const { object } = await generateObject({
@@ -49,12 +51,12 @@ export async function addGeneration({ id }: { id: Schema['id'] }) {
 				)
 			),
 		}),
-		prompt: `Generate ${GENERATE_DATA_LIMIT} rows of data for a schema with the name "${schema.name}" and the description "${
+		prompt: `Generate ${data.rows} rows of data for a schema with the name "${schema.name}" and the description "${
 			schema.desc
 		}". Also, take these rules into consideration: ${schema.rules.map((r) => r.rule).join(';')}`,
 	})
 
-	await prisma.generation.create({ data: { schemaId: id, userId: user.id, data: object.data } })
+	await prisma.generation.create({ data: { schemaId: data.schemaId, userId: user.id, data: object.data } })
 
 	revalidatePath('/')
 	redirect(getSuccessRedirect('/', 'Successfully generated data'))

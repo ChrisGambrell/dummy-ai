@@ -45,3 +45,5 @@ export const upsertRuleSchema = z.object({
 	schemaId: z.string(),
 	rule: z.string().min(1),
 })
+
+export const addGenerationSchema = z.object({ schemaId: z.string(), rows: z.coerce.number().int().positive().max(100).default(10) })

@@ -1,10 +1,10 @@
 import { deleteField } from '@/actions/fields'
-import { addGeneration, deleteGeneration } from '@/actions/generations'
+import { deleteGeneration } from '@/actions/generations'
 import { deleteRule } from '@/actions/rules'
 import { deleteSchema } from '@/actions/schema'
 import { Field, Generation, Prisma, Rule, Schema } from '@prisma/client'
 import { EditIcon, EllipsisIcon, EyeIcon, FormInputIcon, RefreshCcw, ScaleIcon, Trash2Icon } from 'lucide-react'
-import { ActionButton } from './action-button'
+import { AddGeneration } from './add-generation'
 import { ConfirmDelete } from './confirm-delete'
 import { EmptyState } from './empty-state'
 import { FormatDate } from './format-date'
@@ -52,22 +52,22 @@ export function SchemaCard({
 						</ConfirmDelete>
 					</div>
 					<div className='grid gap-2 sm:grid-cols-3'>
-						<form action={addGeneration.bind(null, { id: schema.id })}>
-							{/* TODO: Tooltip not working */}
-							<TooltipProvider>
-								<Tooltip open={schema.fields.length > 0 ? false : undefined}>
-									<TooltipTrigger asChild>
-										<ActionButton className='w-full' disabled={schema.fields.length === 0}>
+						{/* TODO: Tooltip not working */}
+						<TooltipProvider>
+							<Tooltip open={schema.fields.length > 0 ? false : undefined}>
+								<TooltipTrigger asChild>
+									<AddGeneration schemaId={schema.id}>
+										<Button disabled={schema.fields.length === 0}>
 											<RefreshCcw className='size-4 mr-2' />
 											<span>Generate</span>
-										</ActionButton>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>You must have at least one field to generate data.</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						</form>
+										</Button>
+									</AddGeneration>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>You must have at least one field to generate data.</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 						<UpsertField schemaId={schema.id}>
 							<Button variant='secondary'>
 								<FormInputIcon className='size-4 mr-2' />
