@@ -19,7 +19,7 @@ export function UpsertSchema({ children, schema }: { children: ReactNode; schema
 
 	return (
 		<DrawerDialog title={`${schema ? 'Update' : 'Add'} Schema`} trigger={children}>
-			<Tabs defaultValue='form'>
+			{/* <Tabs defaultValue='form'>
 				<TabsList className='grid w-full grid-cols-2 mb-4'>
 					<TabsTrigger value='form'>Form</TabsTrigger>
 					<TabsTrigger value='import'>Import</TabsTrigger>
@@ -60,7 +60,24 @@ export function UpsertSchema({ children, schema }: { children: ReactNode; schema
 						</DialogFooter>
 					</form>
 				</TabsContent>
-			</Tabs>
+			</Tabs> */}
+			<form action={formAction} className='grid gap-4'>
+				<input type='hidden' name='id' value={schema?.id} />
+
+				<div className='grid gap-2'>
+					<Label htmlFor='name'>Name</Label>
+					<Input id='name' name='name' placeholder='User' defaultValue={schema?.name} />
+					<FormError value={formState?.errors.name} />
+				</div>
+				<div className='grid gap-2'>
+					<Label htmlFor='desc'>Description</Label>
+					<Textarea id='name' name='desc' placeholder='A user of a social media application.' defaultValue={schema?.desc} />
+					<FormError value={formState?.errors.desc} />
+				</div>
+				<DialogFooter>
+					<ActionButton className='w-full md:w-fit'>Save</ActionButton>
+				</DialogFooter>
+			</form>
 		</DrawerDialog>
 	)
 }
