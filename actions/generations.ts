@@ -2,7 +2,7 @@
 
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { addGenerationSchema } from '@/lib/validators'
+import { addGenerationSchema } from '@/validators'
 import { openai } from '@ai-sdk/openai'
 import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
 import { Generation } from '@prisma/client'

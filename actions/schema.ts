@@ -2,7 +2,7 @@
 
 import { auth } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { upsertSchemaSchema } from '@/lib/validators'
+import { upsertSchemaSchema } from '@/validators'
 import { getSuccessRedirect, parseFormData } from '@cgambrell/utils'
 import { Schema } from '@prisma/client'
 import { revalidatePath } from 'next/cache'

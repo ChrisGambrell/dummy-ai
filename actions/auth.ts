@@ -1,7 +1,7 @@
 'use server'
 
 import { signIn, signOut } from '@/lib/auth'
-import { loginSchema } from '@/validators/auth'
+import { loginSchema } from '@/validators'
 import { getErrorRedirect, getSuccessRedirect, parseFormData } from '@cgambrell/utils'
 import { AuthError } from 'next-auth'
 import { BuiltInProviderType } from 'next-auth/providers'
